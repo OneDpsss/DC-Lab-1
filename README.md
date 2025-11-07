@@ -9,6 +9,20 @@
 
 <img width="762" height="458" alt="image" src="https://github.com/user-attachments/assets/c0231e47-7fa9-48f1-9b4a-73aa3ff1b03f" />
 
+Графики по ускорению:
+<img width="694" height="410" alt="image" src="https://github.com/user-attachments/assets/0ba06896-5924-444b-9c0b-f03be973ef13" />
+
+<img width="697" height="412" alt="image" src="https://github.com/user-attachments/assets/62924570-b03f-4f9f-89b8-af4c4fdbc550" />
+
+<img width="698" height="415" alt="image" src="https://github.com/user-attachments/assets/17e33ba6-4c46-4c4a-92da-2da7f17511cd" />
+
+Графики по эффективности:
+<img width="696" height="410" alt="image" src="https://github.com/user-attachments/assets/3c2d3c2f-ae45-495c-b2fc-ceb496f0f7aa" />
+
+<img width="689" height="413" alt="image" src="https://github.com/user-attachments/assets/6b138476-369f-48e3-8a61-63e98779e058" />
+
+<img width="696" height="414" alt="image" src="https://github.com/user-attachments/assets/d43c8312-fa3a-4912-8a83-8b2e75e8af55" />
+
 
 ## Задание 3.
 На каждом из графиков представлено время при параллельном и последовательном умножении, а также ускорение и эффективность для P = 1, 4, 16
