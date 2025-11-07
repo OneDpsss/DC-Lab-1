@@ -1,11 +1,14 @@
 # DC-Lab-1
 
 ## Задание 2.
-Результаты выполнения:
+На каждом из графиков представдено время выполнения алгоритма на различных размерах матриц при разбиении по строкам, по столбцам и по блокам для количества потоков P = 1, 4, 16.
 
-<img width="366" height="416" alt="image" src="https://github.com/user-attachments/assets/ff4d8a4e-8ac8-4a13-a7f2-9b5bcaffb541" />
+<img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/146eb8de-24d4-4641-b1e6-c1dc1f869ee9" />
 
-<img width="618" height="369" alt="image" src="https://github.com/user-attachments/assets/808e7ece-4183-49f6-934c-18ad566488c6" />
+<img width="761" height="455" alt="image" src="https://github.com/user-attachments/assets/4492d6a9-3107-417a-a783-0785896dee83" />
+
+<img width="762" height="458" alt="image" src="https://github.com/user-attachments/assets/c0231e47-7fa9-48f1-9b4a-73aa3ff1b03f" />
+
 
 ## Задание 3.
 На каждом из графиков представлено время при параллельном и последовательном умножении, а также ускорение и эффективность для P = 1, 4, 16
