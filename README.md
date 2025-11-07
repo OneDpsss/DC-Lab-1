@@ -13,13 +13,10 @@
 ## Задание 3.
 На каждом из графиков представлено время при параллельном и последовательном умножении, а также ускорение и эффективность для P = 1, 4, 16
 
-<img width="360" height="208" alt="image" src="https://github.com/user-attachments/assets/adf20a0f-cd6e-4e93-ba4f-2bbeb3013aef" />
-<img width="1036" height="705" alt="image" src="https://github.com/user-attachments/assets/82d11eb2-afa6-4a46-aa60-511f1f66542f" />
+<img width="1039" height="665" alt="image" src="https://github.com/user-attachments/assets/23e2aa21-bf16-435d-ad3a-189c3c7e450d" />
 
+<img width="919" height="663" alt="image" src="https://github.com/user-attachments/assets/f2746ecb-9f8c-4e89-ac85-261334a980b1" />
 
-<img width="343" height="207" alt="image" src="https://github.com/user-attachments/assets/2e3a42af-0bfa-4e9c-8de1-314d85fba422" />
-<img width="1017" height="697" alt="image" src="https://github.com/user-attachments/assets/4ed45c33-ebb5-4251-b788-5d46f4c93bfc" />
+<img width="1055" height="674" alt="image" src="https://github.com/user-attachments/assets/31cb8c9b-8d1f-4eca-b66d-ea7b1a9fa6cb" />
 
-
-<img width="348" height="207" alt="image" src="https://github.com/user-attachments/assets/26f6d532-ce23-4f2b-a4af-72a589273cb1" />
-<img width="1093" height="698" alt="image" src="https://github.com/user-attachments/assets/49cf4901-82ca-4a76-9ebc-13f6064409a7" />
+<img width="1136" height="664" alt="image" src="https://github.com/user-attachments/assets/8aa77910-c3a9-406c-aaf5-04af2a1fddf2" />
