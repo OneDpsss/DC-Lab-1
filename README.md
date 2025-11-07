@@ -1,13 +1,25 @@
 # DC-Lab-1
 
 ## Задание 2.
-На каждом из графиков представдено время выполнения алгоритма на различных размерах матриц при разбиении по строкам, по столбцам и по блокам для количества потоков P = 1, 4, 16.
+На каждом из графиков представдено время выполнения, ускорение и эффективность алгоритма на различных размерах матриц при разбиении по строкам, по столбцам и по блокам для количества потоков P = 1, 4, 16.
+
+Графики параллельного выполнения:
 
 <img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/146eb8de-24d4-4641-b1e6-c1dc1f869ee9" />
 
 <img width="761" height="455" alt="image" src="https://github.com/user-attachments/assets/4492d6a9-3107-417a-a783-0785896dee83" />
 
 <img width="762" height="458" alt="image" src="https://github.com/user-attachments/assets/c0231e47-7fa9-48f1-9b4a-73aa3ff1b03f" />
+
+Графики последовательного выполнения:
+
+<img width="761" height="454" alt="image" src="https://github.com/user-attachments/assets/bceda8a5-4219-45bf-b837-145c6c03640d" />
+
+<img width="763" height="452" alt="image" src="https://github.com/user-attachments/assets/b1ed1b96-dace-43e4-9467-06693f3be683" />
+
+<img width="758" height="456" alt="image" src="https://github.com/user-attachments/assets/6d2200b5-33fb-4f54-b7d6-bfc8f5b05a96" />
+
+
 
 Графики по ускорению:
 
