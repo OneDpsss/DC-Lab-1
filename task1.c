@@ -13,29 +13,35 @@ int main(int argc, char** argv) {
 
     FILE *fp = NULL;
     if (rank == 0) {
-        fp = fopen("task1.txt", "w");
+        fp = fopen("task1_fixed.txt", "w");
         if (fp == NULL) {
-            printf("Error: Cannot open file task1.txt\n");
+            printf("Error: Cannot open file task1_fixed.txt\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
-        fprintf(fp, "=== Тесты для чисел 2^n (n от 1 до 16) ===\n\n");
-        fprintf(fp, "Количество процессов: %d\n\n", size);
+        // CSV заголовок
+        fprintf(fp, "n,Total_Points,Sequential_Hits,Sequential_Pi,Sequential_Error,Sequential_Time,Parallel_Hits,Parallel_Pi,Parallel_Error,Parallel_Time,Speedup,Efficiency,Time_Saved,Time_Saved_Percent\n");
     }
+
+    // Инициализация генератора случайных чисел
+    unsigned int seed = time(NULL) + rank * 1000;
+    srand(seed);
 
     for (int n = 1; n <= 16; n++) {
         long long total_points = (long long)pow(2, n);
         
-        if (rank == 0) {
-            fprintf(fp, "----------------------------------------\n");
-            fprintf(fp, "n = %d, Total points = 2^%d = %lld\n", n, n, total_points);
-            fprintf(fp, "----------------------------------------\n");
-        }
 
         // === БЕЗ БУСТА (последовательная версия) ===
+        double sequential_time = 0.0;
+        long long sequential_hits = 0;
+        double pi_estimate_seq = 0.0;
+        double error_seq = 0.0;
+        
         if (rank == 0) {
-            long long sequential_hits = 0;
             double seq_start = MPI_Wtime();
-            srand(time(NULL));
+            
+            // Сохраняем текущее состояние генератора
+            unsigned int seq_seed = seed;
+            srand(seq_seed);
             
             for (long long i = 0; i < total_points; i++) {
                 double x = (double)rand() / RAND_MAX * 2.0 - 1.0;
@@ -47,31 +53,27 @@ int main(int argc, char** argv) {
             }
             
             double seq_end = MPI_Wtime();
-            double sequential_time = seq_end - seq_start;
-            double pi_estimate_seq = 4.0 * (double)sequential_hits / (double)total_points;
+            sequential_time = seq_end - seq_start;
+            pi_estimate_seq = 4.0 * (double)sequential_hits / (double)total_points;
+            error_seq = fabs(pi_estimate_seq - 3.14159265358979323846);
             
-            fprintf(fp, "\nБЕЗ БУСТА (последовательная версия):\n");
-            fprintf(fp, "  Total hits in circle: %lld\n", sequential_hits);
-            fprintf(fp, "  Pi estimate: %.10f\n", pi_estimate_seq);
-            fprintf(fp, "  Hit ratio: %.10f\n", (double)sequential_hits / total_points);
-            fprintf(fp, "  Expected ratio (π/4): %.10f\n", 3.14159265358979323846 / 4.0);
-            fprintf(fp, "  Time: %.6f seconds\n", sequential_time);
+            // Восстанавливаем генератор для параллельной версии
+            srand(seed);
         }
 
         // === С БУСТОМ (параллельная версия) ===
-        MPI_Barrier(MPI_COMM_WORLD);
-        
-        srand(time(NULL) + rank);
         double start_time = MPI_Wtime();
 
         long long points_per_process = total_points / size;
         long long local_hits = 0;
         long long local_points = points_per_process;
 
+        // Корректировка для последнего процесса
         if (rank == size - 1) {
             local_points = total_points - (size - 1) * points_per_process;
         }
 
+        // Локальные вычисления
         for (long long i = 0; i < local_points; i++) {
             double x = (double)rand() / RAND_MAX * 2.0 - 1.0;
             double y = (double)rand() / RAND_MAX * 2.0 - 1.0;
@@ -90,42 +92,26 @@ int main(int argc, char** argv) {
         if (rank == 0) {
             double pi_estimate_par = 4.0 * (double)total_hits / (double)total_points;
             
-            // Вычисляем sequential time для сравнения
-            long long sequential_hits_for_speedup = 0;
-            double seq_start_speedup = MPI_Wtime();
-            srand(time(NULL) + 999);
-            
-            for (long long i = 0; i < total_points; i++) {
-                double x = (double)rand() / RAND_MAX * 2.0 - 1.0;
-                double y = (double)rand() / RAND_MAX * 2.0 - 1.0;
-                
-                if (x * x + y * y <= 1.0) {
-                    sequential_hits_for_speedup++;
-                }
-            }
-            
-            double seq_end_speedup = MPI_Wtime();
-            double sequential_time_for_speedup = seq_end_speedup - seq_start_speedup;
-            double speedup = sequential_time_for_speedup / parallel_time;
+            // ПРАВИЛЬНОЕ вычисление ускорения
+            double speedup = sequential_time / parallel_time;
             double efficiency = speedup / size;
             
-            fprintf(fp, "\nС БУСТОМ (параллельная версия):\n");
-            fprintf(fp, "  Total hits in circle: %lld\n", total_hits);
-            fprintf(fp, "  Pi estimate: %.10f\n", pi_estimate_par);
-            fprintf(fp, "  Hit ratio: %.10f\n", (double)total_hits / total_points);
-            fprintf(fp, "  Expected ratio (π/4): %.10f\n", 3.14159265358979323846 / 4.0);
-            fprintf(fp, "  Time: %.6f seconds\n", parallel_time);
-            fprintf(fp, "  Speedup: %.6f\n", speedup);
-            fprintf(fp, "  Efficiency: %.6f\n", efficiency);
-            fprintf(fp, "\n");
+            double error_par = fabs(pi_estimate_par - 3.14159265358979323846);
+            double time_saved = sequential_time - parallel_time;
+            double time_saved_percent = (time_saved / sequential_time) * 100.0;
+            
+            // CSV строка с данными
+            fprintf(fp, "%d,%lld,%lld,%.10f,%.10f,%.6f,%lld,%.10f,%.10f,%.6f,%.6f,%.6f,%.6f,%.2f\n",
+                    n, total_points,
+                    sequential_hits, pi_estimate_seq, error_seq, sequential_time,
+                    total_hits, pi_estimate_par, error_par, parallel_time,
+                    speedup, efficiency, time_saved, time_saved_percent);
         }
-        
-        MPI_Barrier(MPI_COMM_WORLD);
     }
 
     if (rank == 0) {
         fclose(fp);
-        printf("Результаты сохранены в файл task1.txt\n");
+        printf("Results saved to file task1_fixed.txt\n");
     }
 
     MPI_Finalize();
