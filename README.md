@@ -5,18 +5,18 @@
 
 ### Графики параллельного выполнения:
 
-<img width="527" height="301" alt="image" src="https://github.com/user-attachments/assets/a45a926a-70b0-494c-847c-f0cf231c82f3" />
+<img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/a45a926a-70b0-494c-847c-f0cf231c82f3" />
 
 ### Графики последовательного выполнения:
-<img width="471" height="257" alt="image" src="https://github.com/user-attachments/assets/19010d17-937a-4643-a713-153bfdca195a" />
+<img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/19010d17-937a-4643-a713-153bfdca195a" />
 
 ### Графики по ускорению:
 
-<img width="527" height="301" alt="image" src="https://github.com/user-attachments/assets/9fb9a9d7-fe95-41ad-959a-6042c35191a4" />
+<img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/9fb9a9d7-fe95-41ad-959a-6042c35191a4" />
 
 ### Графики по эффективности:
 
-<img width="761" height="440" alt="image" src="https://github.com/user-attachments/assets/aa144648-06d6-4134-8c76-7f64d031b01b" />
+<img width="761" height="458" alt="image" src="https://github.com/user-attachments/assets/aa144648-06d6-4134-8c76-7f64d031b01b" />
 
 ### Выводы по заданию 1.
 
