@@ -149,6 +149,7 @@ int main(int argc, char **argv) {
         double speedup = T_seq / T_par;
         double efficiency = speedup / size;
         // CSV format: N, P, T_par, T_seq, Speedup, Efficiency
+        // printf("N, P, T_par, T_seq, Speedup, Efficiency\n");
         printf("%d,%d,%.6f,%.6f,%.4f,%.4f\n", N, size, T_par, T_seq, speedup, efficiency);
     }
 

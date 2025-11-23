@@ -1,12 +1,12 @@
+#include <math.h>
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     int rank, size;
-    
+
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -28,35 +28,34 @@ int main(int argc, char** argv) {
 
     for (int n = 1; n <= 16; n++) {
         long long total_points = (long long)pow(2, n);
-        
 
         // === БЕЗ БУСТА (последовательная версия) ===
         double sequential_time = 0.0;
         long long sequential_hits = 0;
         double pi_estimate_seq = 0.0;
         double error_seq = 0.0;
-        
+
         if (rank == 0) {
             double seq_start = MPI_Wtime();
-            
+
             // Сохраняем текущее состояние генератора
             unsigned int seq_seed = seed;
             srand(seq_seed);
-            
+
             for (long long i = 0; i < total_points; i++) {
                 double x = (double)rand() / RAND_MAX * 2.0 - 1.0;
                 double y = (double)rand() / RAND_MAX * 2.0 - 1.0;
-                
+
                 if (x * x + y * y <= 1.0) {
                     sequential_hits++;
                 }
             }
-            
+
             double seq_end = MPI_Wtime();
             sequential_time = seq_end - seq_start;
             pi_estimate_seq = 4.0 * (double)sequential_hits / (double)total_points;
             error_seq = fabs(pi_estimate_seq - 3.14159265358979323846);
-            
+
             // Восстанавливаем генератор для параллельной версии
             srand(seed);
         }
@@ -91,15 +90,15 @@ int main(int argc, char** argv) {
 
         if (rank == 0) {
             double pi_estimate_par = 4.0 * (double)total_hits / (double)total_points;
-            
+
             // ПРАВИЛЬНОЕ вычисление ускорения
             double speedup = sequential_time / parallel_time;
             double efficiency = speedup / size;
-            
+
             double error_par = fabs(pi_estimate_par - 3.14159265358979323846);
             double time_saved = sequential_time - parallel_time;
             double time_saved_percent = (time_saved / sequential_time) * 100.0;
-            
+
             // CSV строка с данными
             fprintf(fp, "%d,%lld,%lld,%.10f,%.10f,%.6f,%lld,%.10f,%.10f,%.6f,%.6f,%.6f,%.6f,%.2f\n",
                     n, total_points,
