@@ -25,8 +25,7 @@ double multiply_rowwise(int N, double *A_full, double *x_full, double *y_full, i
     double *A_local = (double *)malloc(local_rows * N * sizeof(double));
     double *y_local = (double *)calloc(local_rows, sizeof(double));
 
-    if (!A_local || !y_local) {
-        fprintf(stderr, "Rank %d: memory allocation failed.\n", rank);
+    if (!A_local || !y_local) 
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
@@ -97,7 +96,6 @@ double multiply_columnwise(int N, double *A_full, double *x_full, double *y_full
     double *y_local = (double *)calloc(N, sizeof(double));
 
     if (!A_local || !x_local || !y_local) {
-        fprintf(stderr, "Rank %d: memory allocation failed.\n", rank);
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
@@ -154,13 +152,11 @@ double multiply_blockwise(int N, double *A_full, double *x_full, double *y_full,
     int p = (int)sqrt((double)size);
     if (p * p != size) {
         if (rank == 0)
-            fprintf(stderr, "Error: number of processes (%d) must be a perfect square for block distribution.\n", size);
         return -1.0;
     }
 
     if (N % p != 0) {
         if (rank == 0)
-            fprintf(stderr, "Error: N=%d is not divisible by p=%d.\n", N, p);
         return -1.0;
     }
 
@@ -175,7 +171,6 @@ double multiply_blockwise(int N, double *A_full, double *x_full, double *y_full,
     double *y_block = (double *)calloc(n, sizeof(double));
 
     if (!A_block || !x_block || !y_block) {
-        fprintf(stderr, "Rank %d: memory allocation failed.\n", rank);
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
@@ -271,7 +266,6 @@ int run_experiment(int N, int algo, int rank, int size) {
         y_full = (double *)malloc(N * sizeof(double));
 
         if (!A_full || !x_full || !y_full) {
-            fprintf(stderr, "Rank 0: failed to allocate memory for N=%d.\n", N);
             free(A_full);
             free(x_full);
             free(y_full);
@@ -304,17 +298,17 @@ int run_experiment(int N, int algo, int rank, int size) {
         int p = (int)sqrt((double)size);
         if (p * p != size) {
             if (rank == 0)
-                fprintf(stderr, "Skipping N=%d: P=%d is not a perfect square for block algorithm.\n", N, size);
+                fprintf(stderr, "Неподходящие данные\n", N, size);
             valid = 0;
         } else if (N % p != 0) {
             if (rank == 0)
-                fprintf(stderr, "Skipping N=%d: not divisible by sqrt(P)=%d for block algorithm.\n", N, p);
+                fprintf(stderr, "Неподходящие данные\n", N, size);
             valid = 0;
         }
     } else {
         if (N % size != 0) {
             if (rank == 0)
-                fprintf(stderr, "Skipping N=%d: not divisible by P=%d.\n", N, size);
+                fprintf(stderr, "Неподходящие данные\n", N, size);
             valid = 0;
         }
     }
@@ -349,7 +343,7 @@ int run_experiment(int N, int algo, int rank, int size) {
         }
     } else {
         if (rank == 0)
-            fprintf(stderr, "Error: invalid algorithm. Use 1=row, 2=column, 3=block\n");
+            fprintf(stderr, "Неверный номер алгоритма: 1=row, 2=column, 3=block\n");
         if (rank != 0) {
             free(y_full);
         }
@@ -393,7 +387,7 @@ int main(int argc, char **argv) {
 
     if (algo_specified < 0 || algo_specified > 3) {
         if (rank == 0)
-            fprintf(stderr, "Error: invalid algorithm. Use 0=all, 1=row, 2=column, 3=block\n");
+            fprintf(stderr, "Неверный номер алгоритма: 1=row, 2=column, 3=block\n");
         MPI_Finalize();
         return 1;
     }
