@@ -5,7 +5,6 @@
 #include <string.h>
 
 double sequential_multiply(int N, double *A, double *B, double *C) {
-    // Initialize C to zero
     for (int i = 0; i < N * N; ++i)
         C[i] = 0.0;
 
@@ -24,7 +23,6 @@ int main(int argc, char **argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    // Check if number of processes is a perfect square
     int p = (int)sqrt((double)size);
     if (p * p != size) {
         if (rank == 0)
@@ -33,7 +31,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // Parse matrix size N
     int N = (argc > 1) ? atoi(argv[1]) : 512;
     if (N % p != 0) {
         if (rank == 0)
@@ -42,9 +39,8 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    int n = N / p; // local block dimension
+    int n = N / p;
 
-    // Allocate local blocks
     double *A_block = (double *)malloc(n * n * sizeof(double));
     double *B_block = (double *)malloc(n * n * sizeof(double));
     double *C_block = (double *)calloc(n * n, sizeof(double));
@@ -54,7 +50,6 @@ int main(int argc, char **argv) {
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    // Initialize full matrices on rank 0
     double *A_full = NULL, *B_full = NULL;
     double T_seq = 0.0;
 
@@ -68,7 +63,7 @@ int main(int argc, char **argv) {
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
         for (int i = 0; i < N * N; ++i) {
-            A_full[i] = (double)(i % 10); // small values to avoid overflow
+            A_full[i] = (double)(i % 10);
             B_full[i] = (double)((i + 1) % 10);
         }
         double *C_seq = (double *)malloc(N * N * sizeof(double));
@@ -76,7 +71,6 @@ int main(int argc, char **argv) {
         free(C_seq);
     }
 
-    // Distribute blocks
     MPI_Scatter(A_full, n * n, MPI_DOUBLE, A_block, n * n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Scatter(B_full, n * n, MPI_DOUBLE, B_block, n * n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -85,11 +79,9 @@ int main(int argc, char **argv) {
         free(B_full);
     }
 
-    // 2D grid coordinates
     int row = rank / p;
     int col = rank % p;
 
-    // Initial shift for A: left by 'row' positions
     int shift_a = (-row + p) % p;
     for (int s = 0; s < shift_a; ++s) {
         int left_rank = row * p + (col - 1 + p) % p;
@@ -100,7 +92,6 @@ int main(int argc, char **argv) {
                              MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    // Initial shift for B: up by 'col' positions
     int shift_b = (-col + p) % p;
     for (int s = 0; s < shift_b; ++s) {
         int up_rank = ((row - 1 + p) % p) * p + col;
@@ -111,17 +102,14 @@ int main(int argc, char **argv) {
                              MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    // Main Cannon loop
     double t_start = MPI_Wtime();
 
     for (int step = 0; step < p; ++step) {
-        // Local block multiplication: C += A * B
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < n; ++j)
                 for (int k = 0; k < n; ++k)
                     C_block[i * n + j] += A_block[i * n + k] * B_block[k * n + j];
 
-        // Shift A left
         int left_rank = row * p + (col - 1 + p) % p;
         int right_rank = row * p + (col + 1) % p;
         MPI_Sendrecv_replace(A_block, n * n, MPI_DOUBLE,
@@ -129,7 +117,6 @@ int main(int argc, char **argv) {
                              left_rank, 2,
                              MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        // Shift B up
         int up_rank = ((row - 1 + p) % p) * p + col;
         int down_rank = ((row + 1) % p) * p + col;
         MPI_Sendrecv_replace(B_block, n * n, MPI_DOUBLE,
@@ -141,19 +128,16 @@ int main(int argc, char **argv) {
     double t_end = MPI_Wtime();
     double local_time = t_end - t_start;
 
-    // Get max execution time across all processes
     double T_par;
     MPI_Reduce(&local_time, &T_par, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
         double speedup = T_seq / T_par;
         double efficiency = speedup / size;
-        // CSV format: N, P, T_par, T_seq, Speedup, Efficiency
-        // printf("N, P, T_par, T_seq, Speedup, Efficiency\n");
+        printf("N, P, T_par, T_seq, Speedup, Efficiency\n");
         printf("%d,%d,%.6f,%.6f,%.4f,%.4f\n", N, size, T_par, T_seq, speedup, efficiency);
     }
 
-    // Cleanup
     free(A_block);
     free(B_block);
     free(C_block);

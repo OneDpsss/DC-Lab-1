@@ -406,7 +406,7 @@ int main(int argc, char **argv) {
         start_algo = algo_specified - 1;
         end_algo = algo_specified - 1;
     }
-
+    printf("N, size, algo_name, T_par, T_seq, speedup, efficiency\n");
     if (N_specified > 0) {
         for (int a = start_algo; a <= end_algo; ++a) {
             if (run_experiment(N_specified, algorithms[a], rank, size) != 0) {

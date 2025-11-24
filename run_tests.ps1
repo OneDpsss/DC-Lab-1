@@ -1,10 +1,9 @@
 # run_tests.ps1
 
-# Output file
 $csvFile = "results.csv"
 " N, P, T_par, T_seq, Speedup, Efficiency" | Out-File -FilePath $csvFile -Encoding utf8
 
-$Ns = @(128, 256, 512)
+$Ns = @(128, 256, 512, 1024)
 $Ps = @(1, 4, 9, 16, 25)
 
 foreach ($N in $Ns) {
@@ -16,7 +15,6 @@ foreach ($N in $Ns) {
         }
 
         Write-Host "Running: N=$N, P=$P" -ForegroundColor Cyan
-        # Run with mpirun (or mpiexec, depending on your MPI implementation)
         $output = mpiexec -n $P .\task3.exe $N 2>$null
         $output | Out-File -FilePath $csvFile -Append -Encoding utf8
     }

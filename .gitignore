@@ -2,3 +2,4 @@
 *.obj
 *.csv
 *.txt
+.vscode
